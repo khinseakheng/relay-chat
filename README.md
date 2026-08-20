@@ -167,3 +167,7 @@ pnpm format:check
 pnpm build
 pnpm --filter api migration:run
 ```
+
+## License
+
+Relay Chat is open-source software licensed under the [MIT License](LICENSE).
