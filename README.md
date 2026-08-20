@@ -4,13 +4,20 @@ A Tawk.to-inspired, embeddable live-chat MVP built with React, NestJS, and Socke
 
 ## Run locally
 
+Create a PostgreSQL database, then prepare the local environment and install dependencies:
+
 ```bash
-docker compose up -d
+cp .env.example .env
 pnpm install
+```
+
+Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` in `.env` for your database, then start all three applications:
+
+```bash
 pnpm dev
 ```
 
-If Docker is unavailable, create a PostgreSQL database manually and configure the `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` variables from `.env.example` before running `pnpm dev`.
+Pending migrations run automatically at API startup by default. The development command starts the API, operator dashboard, and authenticated customer demo together.
 
 - Operator dashboard: http://localhost:5173
 - API: http://localhost:3000
@@ -25,13 +32,11 @@ If Docker is unavailable, create a PostgreSQL database manually and configure th
 <script
   src="http://localhost:3000/widget.js"
   data-site-id="your-generated-site-id"
-  data-color="#5b5cf0"
-  data-title="Chat with Relay"
   async
 ></script>
 ```
 
-Register a workspace, then copy the complete snippet or open the widget demo from `/install`. For production, deploy both apps, set `VITE_API_URL` on the frontend, and replace the script URL with your public API domain.
+Register a workspace, then copy the complete snippet or open the widget demo from `/widgets`. Configure the widget's title, color, launcher, and other appearance settings in the widget management screen. For production, deploy the API and web apps, set `VITE_API_URL` on the frontend, and replace the script URL with your public API domain.
 
 ### Authenticated visitors
 
@@ -131,6 +136,7 @@ Run `pnpm --filter api migration:run` when upgrading an existing production data
 - `/docs` — authenticated widget integration guide with workspace-specific copyable examples
 - `/install` — compatibility redirect to widget management
 - `/settings` — operator profile and notification preferences
+- `/administration` — workspace security, attachment policy, session revocation, and audit log
 
 ## Project structure
 
@@ -138,16 +144,19 @@ Run `pnpm --filter api migration:run` when upgrading an existing production data
 apps/
 ├── api/src/
 │   ├── auth/           # JWT module, strategy, DTO, controller and service
-│   ├── chat/           # controller → service → cache → repository → TypeORM
+│   ├── chat/           # REST, WebSocket, widget, caching and persistence
 │   ├── common/         # guards, decorators, response interceptor and error filter
-│   ├── workspace/      # users, memberships, roles, widgets and invitations
-│   └── database/       # TypeORM data source and production migrations
-└── web/src/
-    ├── components/     # reusable layout and inbox components
-    ├── hooks/          # authentication and conversation providers
-    ├── lib/            # typed API, socket and formatting utilities
-    ├── pages/          # route-level, lazily loaded screens
-    └── router.tsx      # protected application routes
+│   ├── config/         # Swagger configuration
+│   ├── database/       # TypeORM data source and production migrations
+│   ├── storage/        # local and Cloudflare R2 attachment storage
+│   └── workspace/      # users, memberships, roles, widgets and invitations
+├── web/src/
+│   ├── components/     # reusable layout and inbox components
+│   ├── hooks/          # authentication and conversation providers
+│   ├── lib/            # typed API, socket and formatting utilities
+│   ├── pages/          # route-level, lazily loaded screens
+│   └── router.tsx      # protected application routes
+└── demo-site/          # authenticated customer demo and backend token exchange
 ```
 
 ## Quality commands
