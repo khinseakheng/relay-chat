@@ -1,0 +1,107 @@
+export type Message = {
+  id: string;
+  conversationId: string;
+  sender: 'visitor' | 'agent';
+  senderName: string;
+  senderUserId?: string;
+  text: string;
+  createdAt: string;
+  deletedAt?: string;
+  readAt?: string;
+  attachmentName?: string;
+  attachmentMime?: string;
+  attachmentData?: string;
+  attachmentUrl?: string;
+  attachmentKey?: string;
+  attachmentSize?: number;
+};
+export type StoredFile = { key: string; name: string; mime: string; size: number; url: string };
+export type AttachmentCategory = 'images' | 'pdf' | 'documents' | 'spreadsheets' | 'archives' | 'text';
+export type AttachmentPolicy = { maxSizeMb: number; allowedTypes: AttachmentCategory[] };
+export type Note = { id: string; text: string; createdAt: string; author: string };
+export type Conversation = {
+  id: string;
+  siteId: string;
+  visitor: {
+    name: string;
+    email: string;
+    location: string;
+    browser: string;
+    initials: string;
+    customFields: Record<string, string>;
+    authenticated: boolean;
+    externalUserId: string | null;
+  };
+  status: 'open' | 'closed';
+  unread: number;
+  assignedTo: string;
+  assignedMemberId: string | null;
+  page: string;
+  tags: string[];
+  notes: Note[];
+  startedAt: string;
+  firstSeenAt: string;
+  online: boolean;
+  lastSeenAt: string | null;
+  messages: Message[];
+};
+export type ConversationPage = {
+  items: Conversation[];
+  page: number;
+  limit: number;
+  total: number;
+  hasMore: boolean;
+  counts: { all: number; open: number; closed: number };
+};
+export type BusinessHour = { day: number; enabled: boolean; start: string; end: string };
+export type ChatWidget = {
+  id: string;
+  siteId: string;
+  name: string;
+  title: string;
+  color: string;
+  enabled: boolean;
+  allowedDomains: string[];
+  authenticationMode: 'public' | 'authenticated' | 'hybrid';
+  availabilityMode: 'auto' | 'online' | 'offline';
+  timezone: string;
+  businessHours: BusinessHour[];
+  holidays: string[];
+  offlineFormEnabled: boolean;
+  offlineMessage: string;
+  expectedResponseTime: string;
+  maxActiveConversationsPerAgent: number;
+  greeting: string;
+  welcomeMessage: string;
+  logoUrl?: string;
+  launcherIcon: 'sparkle' | 'chat' | 'logo';
+  position: 'bottom-right' | 'bottom-left';
+  offsetX: number;
+  offsetY: number;
+  theme: 'light' | 'dark' | 'auto';
+  showOnMobile: boolean;
+  language: 'en' | 'km' | 'th' | 'es' | 'fr';
+  preChatFields: {
+    name: { enabled: boolean; required: boolean };
+    email: { enabled: boolean; required: boolean };
+  };
+  customFields: Array<{
+    id: string;
+    label: string;
+    type: 'text' | 'email' | 'select';
+    required: boolean;
+    options: string[];
+  }>;
+};
+
+export type WorkspaceApiKey = {
+  id: string;
+  widgetId: string;
+  name: string;
+  prefix: string;
+  scopes: string[];
+  expiresAt: string | null;
+  revokedAt: string | null;
+  lastUsedAt: string | null;
+  createdAt: string;
+};

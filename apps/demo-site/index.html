@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An authenticated customer website for testing Relay chat." />
+    <title>Northstar — Authenticated Relay Demo</title>
+    <style>
+      :root{color:#172033;background:#f7f8fc;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-synthesis:none}*{box-sizing:border-box}body{min-width:320px;min-height:100vh;margin:0;background:radial-gradient(circle at 90% 10%,#e7e2ff 0,transparent 28rem),radial-gradient(circle at 5% 90%,#dff6ef 0,transparent 24rem),#f7f8fc}.container{width:min(1120px,calc(100% - 40px));margin:auto}header{display:flex;align-items:center;justify-content:space-between;padding:24px 0}.brand{display:flex;align-items:center;gap:10px;color:inherit;font-size:18px;font-weight:800;text-decoration:none}.brand-mark{display:grid;width:38px;height:38px;place-items:center;border-radius:12px;background:#6557e8;color:#fff}.identity{display:flex;align-items:center;gap:10px;color:#657086;font-size:13px}.dot{width:8px;height:8px;border-radius:50%;background:#aab1c0}.identity.online .dot{background:#24b47e;box-shadow:0 0 0 4px #24b47e1f}main{display:grid;min-height:calc(100vh - 100px);align-items:center;gap:64px;padding:55px 0 100px;grid-template-columns:1.05fr .95fr}.eyebrow{margin:0 0 18px;color:#6557e8;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}h1{max-width:680px;margin:0;font-size:clamp(42px,6vw,70px);line-height:1;letter-spacing:-.055em}.intro{max-width:570px;margin:26px 0 0;color:#677086;font-size:18px;line-height:1.7}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}button,.button{border:1px solid #d9deea;border-radius:12px;padding:12px 17px;background:#fff;color:#172033;font:inherit;font-size:14px;font-weight:750;cursor:pointer;text-decoration:none}button.primary{border-color:#6557e8;background:#6557e8;color:#fff;box-shadow:0 12px 28px #6557e833}button:disabled{cursor:wait;opacity:.55}.card{position:relative;overflow:hidden;border:1px solid #e0e3ec;border-radius:28px;padding:28px;background:#ffffffdf;box-shadow:0 28px 70px #20294514;backdrop-filter:blur(14px)}.card h2{margin:0;font-size:21px}.card>p{margin:8px 0 22px;color:#7a8398;font-size:13px;line-height:1.6}.field{display:grid;gap:6px;margin-top:13px}.field span{font-size:11px;font-weight:800;color:#59647a}.field input{width:100%;height:43px;border:1px solid #dde1ea;border-radius:11px;padding:0 12px;background:#fff;font:inherit;outline:0}.field input:focus{border-color:#6557e8;box-shadow:0 0 0 3px #6557e817}.submit{width:100%;margin-top:18px}.message{min-height:18px;margin:12px 0 0;color:#cf4054;font-size:12px}.accounts{display:grid;gap:8px;margin-top:20px}.account{display:flex;justify-content:space-between;border-radius:12px;padding:11px 13px;background:#f6f4ff;color:#625a77;font-size:11px}.profile{display:none}.profile-card{display:grid;gap:13px;border-radius:18px;padding:18px;background:#f6f4ff}.profile-row{display:flex;justify-content:space-between;gap:20px;font-size:13px}.profile-row span{color:#7a8398}.profile-row b{text-align:right}.flow{display:grid;gap:10px;margin-top:22px}.flow div{display:flex;gap:11px;align-items:center;font-size:12px;color:#647086}.flow i{display:grid;width:25px;height:25px;flex:none;place-items:center;border-radius:8px;background:#e9e6ff;color:#6557e8;font-style:normal;font-weight:900}@media(max-width:800px){main{grid-template-columns:1fr;padding-top:30px}.card{margin-bottom:40px}}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <a class="brand" href="/"><span class="brand-mark">N</span> Northstar</a>
+        <span class="identity" id="identity"><i class="dot"></i><span>Signed out</span></span>
+      </header>
+      <main>
+        <section>
+          <p class="eyebrow">Authenticated customer website</p>
+          <h1>See identity-aware support in action.</h1>
+          <p class="intro">Sign in as a fake Northstar customer. This Express server verifies the session and requests a one-time Relay token without exposing its API key to the browser.</p>
+          <div class="actions">
+            <button class="primary" id="open-chat" disabled>Open authenticated chat</button>
+            <a class="button" href="http://localhost:5173/inbox" target="_blank" rel="noreferrer">Open operator inbox</a>
+          </div>
+          <div class="flow">
+            <div><i>1</i>Browser signs in to this Express application</div>
+            <div><i>2</i>Express calls Relay using the server-only API key</div>
+            <div><i>3</i>The widget exchanges a 60-second, single-use token</div>
+          </div>
+        </section>
+        <aside class="card">
+          <form id="login-form">
+            <h2>Customer sign in</h2>
+            <p>Use either fake account. This demo stores sessions in memory.</p>
+            <label class="field"><span>Email</span><input id="email" type="email" value="alex@northstar.test" required /></label>
+            <label class="field"><span>Password</span><input id="password" type="password" value="demo123" required /></label>
+            <button class="primary submit" id="login-button">Sign in and connect chat</button>
+            <p class="message" id="login-message"></p>
+            <div class="accounts"><div class="account"><span>alex@northstar.test</span><b>demo123</b></div><div class="account"><span>maya@northstar.test</span><b>demo123</b></div></div>
+          </form>
+          <section class="profile" id="profile">
+            <h2>Authenticated customer</h2>
+            <p>Relay receives this verified identity from Express.</p>
+            <div class="profile-card"><div class="profile-row"><span>Name</span><b id="profile-name"></b></div><div class="profile-row"><span>Email</span><b id="profile-email"></b></div><div class="profile-row"><span>External ID</span><b id="profile-id"></b></div><div class="profile-row"><span>Plan</span><b id="profile-plan"></b></div></div>
+            <p class="message" id="profile-message"></p>
+            <button class="submit" id="logout-button">Sign out</button>
+          </section>
+        </aside>
+      </main>
+    </div>
+    <script type="module" src="/client.js"></script>
+  </body>
+</html>

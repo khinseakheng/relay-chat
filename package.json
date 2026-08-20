@@ -1,0 +1,14 @@
+{
+  "name": "relay-chat",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n API,WEB,DEMO -c magenta,cyan,green \"pnpm --filter api start:dev\" \"pnpm --filter web dev\" \"pnpm --filter demo-site dev\"",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "format:check": "pnpm -r format:check"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
