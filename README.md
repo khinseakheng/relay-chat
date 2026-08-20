@@ -2,7 +2,36 @@
 
 A Tawk.to-inspired, embeddable live-chat MVP built with React, NestJS, and Socket.IO.
 
-## Run locally
+## Run with Docker
+
+Docker Compose starts PostgreSQL, the API, the operator dashboard, and the authenticated customer demo. Copy the example configuration, then build and start the stack:
+
+```bash
+cp .env.example .env
+docker compose up --build -d
+```
+
+Pending database migrations run automatically when the API starts. Check container status and logs with:
+
+```bash
+docker compose ps
+docker compose logs -f
+```
+
+- Operator dashboard: http://localhost:5173
+- API: http://localhost:3000
+- Swagger docs: http://localhost:3000/docs
+- OpenAPI JSON: http://localhost:3000/docs/openapi.json
+- Registration: http://localhost:5173/register
+- Authenticated customer demo: http://localhost:5174
+
+The dashboard and public widget work with the default local Docker settings. To use authenticated chat in the customer demo, create a widget API key and set `RELAY_SITE_ID` and `RELAY_API_KEY` in `.env`, then run `docker compose up -d` again.
+
+Stop the stack with `docker compose down`. PostgreSQL data and local uploads remain in named Docker volumes.
+
+The Compose defaults are intended for local development. Before a public deployment, set strong `JWT_SECRET` and `JWT_REFRESH_SECRET` values, configure the public URL and cookie settings, and use production database credentials.
+
+## Run without Docker
 
 Create a PostgreSQL database, then prepare the local environment and install dependencies:
 
@@ -141,22 +170,21 @@ Run `pnpm --filter api migration:run` when upgrading an existing production data
 ## Project structure
 
 ```text
-apps/
-├── api/src/
-│   ├── auth/           # JWT module, strategy, DTO, controller and service
-│   ├── chat/           # REST, WebSocket, widget, caching and persistence
-│   ├── common/         # guards, decorators, response interceptor and error filter
-│   ├── config/         # Swagger configuration
-│   ├── database/       # TypeORM data source and production migrations
-│   ├── storage/        # local and Cloudflare R2 attachment storage
-│   └── workspace/      # users, memberships, roles, widgets and invitations
-├── web/src/
-│   ├── components/     # reusable layout and inbox components
-│   ├── hooks/          # authentication and conversation providers
-│   ├── lib/            # typed API, socket and formatting utilities
-│   ├── pages/          # route-level, lazily loaded screens
-│   └── router.tsx      # protected application routes
-└── demo-site/          # authenticated customer demo and backend token exchange
+.
+├── apps/
+│   ├── api/src/
+│   │   ├── auth/       # JWT module, strategy, DTO, controller and service
+│   │   ├── chat/       # REST, WebSocket, widget, caching and persistence
+│   │   ├── common/     # guards, decorators, response interceptor and error filter
+│   │   ├── config/     # Swagger configuration
+│   │   ├── database/   # TypeORM data source and production migrations
+│   │   ├── storage/    # local and Cloudflare R2 attachment storage
+│   │   └── workspace/  # users, memberships, roles, widgets and invitations
+│   ├── web/src/        # React operator dashboard
+│   └── demo-site/      # authenticated customer demo and backend token exchange
+├── docker/nginx.conf   # SPA web-server configuration
+├── Dockerfile          # API, web and demo image targets
+└── compose.yaml        # local full-stack orchestration
 ```
 
 ## Quality commands

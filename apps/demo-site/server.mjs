@@ -13,6 +13,7 @@ try {
 const directory = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.env.DEMO_PORT || 5174);
 const relayApiUrl = (process.env.RELAY_API_URL || 'http://localhost:3000').replace(/\/$/, '');
+const relayInternalApiUrl = (process.env.RELAY_INTERNAL_API_URL || relayApiUrl).replace(/\/$/, '');
 const relaySiteId = process.env.RELAY_SITE_ID || 'heng-44f0c477-f8315f';
 const relayApiKey = process.env.RELAY_API_KEY || '';
 const sessionCookie = 'northstar_demo_session';
@@ -63,7 +64,9 @@ function publicUser(user) {
 
 app.get('/api/config', async (_request, response) => {
   try {
-    const relayResponse = await fetch(`${relayApiUrl}/widget-api/config/${encodeURIComponent(relaySiteId)}`);
+    const relayResponse = await fetch(
+      `${relayInternalApiUrl}/widget-api/config/${encodeURIComponent(relaySiteId)}`,
+    );
     const payload = await relayResponse.json();
     if (!relayResponse.ok || !payload.success) throw new Error('Widget configuration is unavailable');
     response.set('Cache-Control', 'no-store').json({
@@ -109,7 +112,7 @@ app.get('/api/relay-chat-session', async (request, response) => {
     return response.status(503).json({ error: 'Set RELAY_API_KEY in the root .env file.' });
   }
   try {
-    const relayResponse = await fetch(`${relayApiUrl}/v1/widget-sessions`, {
+    const relayResponse = await fetch(`${relayInternalApiUrl}/v1/widget-sessions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${relayApiKey}`,

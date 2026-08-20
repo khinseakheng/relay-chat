@@ -23,6 +23,8 @@ Add these values to the repository root `.env`:
 
 ```env
 RELAY_API_URL=http://localhost:3000
+# Optional private server-to-server URL, such as http://api:3000 in Docker
+RELAY_INTERNAL_API_URL=
 RELAY_SITE_ID=your-widget-site-id
 RELAY_API_KEY=rly_live_your_private_key
 DEMO_PORT=5174
